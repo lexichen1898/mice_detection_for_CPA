@@ -40,10 +40,10 @@
         <div id="en">
 # Lexi Mice Detection
 
+## Overview
 A computer vision project for mouse behavior detection using YOLO model.
 
 ## Environment Setup
-
 This project uses Conda for environment management. Follow these steps to set up the environment:
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/download)
@@ -58,7 +58,6 @@ conda activate lexi_mice_detection
 ```
 
 ## Project Structure
-
 ```
 lexi_mice_detection/
 ├── src/                    # Source code directory
@@ -75,7 +74,6 @@ lexi_mice_detection/
 ```
 
 ## Main Features
-
 1. Video object detection
 2. Heatmap generation
 3. Region marking
@@ -83,7 +81,6 @@ lexi_mice_detection/
 5. Model training
 
 ## Usage
-
 ### 1. Video Detection
 ```bash
 python src/inference.py --video <video_path> --model <model_path>
@@ -105,7 +102,6 @@ python src/mark_sections_web.py
 ```
 
 ## Notes
-
 1. Ensure all dependencies are correctly installed
 2. Make sure you have sufficient disk space before use
 3. GPU is recommended for training and inference
@@ -115,10 +111,10 @@ python src/mark_sections_web.py
         <div id="zh" style="display: none;">
 # Lexi Mice Detection
 
+## 项目概述
 这是一个用于检测小鼠行为的计算机视觉项目，使用 YOLO 模型进行目标检测。
 
 ## 环境配置
-
 本项目使用 Conda 管理环境。请按照以下步骤配置环境：
 
 1. 安装 [Miniconda](https://docs.conda.io/en/latest/miniconda.html) 或 [Anaconda](https://www.anaconda.com/download)
@@ -133,7 +129,6 @@ conda activate lexi_mice_detection
 ```
 
 ## 项目结构
-
 ```
 lexi_mice_detection/
 ├── src/                    # 源代码目录
@@ -150,7 +145,6 @@ lexi_mice_detection/
 ```
 
 ## 主要功能
-
 1. 视频目标检测
 2. 热力图生成
 3. 区域标记
@@ -158,7 +152,6 @@ lexi_mice_detection/
 5. 模型训练
 
 ## 使用方法
-
 ### 1. 视频检测
 ```bash
 python src/inference.py --video <视频路径> --model <模型路径>
@@ -180,7 +173,6 @@ python src/mark_sections_web.py
 ```
 
 ## 注意事项
-
 1. 确保已正确安装所有依赖
 2. 使用前请确保有足够的磁盘空间
 3. 建议使用GPU进行训练和推理
