@@ -64,15 +64,15 @@ The project includes a pre-trained YOLO model (`best.pt`) for mouse detection, w
 
 ### 1. Video Detection
 ```bash
-# 处理单个视频
+# Process single video
 python src/inference.py --video <video_path> --model <model_path> --output-dir <output_dir> --conf-thres <confidence_threshold>
 
-# 处理整个文件夹的视频
+# Process all videos in a folder
 python src/inference.py --video <video_folder_path> --model <model_path> --output-dir <output_dir> --conf-thres <confidence_threshold>
 
-# 可选参数：
-# --no-save-video: 不保存检测结果视频
-# --no-save-json: 不保存检测结果JSON
+# Optional parameters:
+# --no-save-video: Do not save detection video
+# --no-save-json: Do not save detection JSON
 ```
 
 ### 2. Model Training
@@ -84,18 +84,18 @@ python src/train_yolo.py --data <dataset_config> --epochs <num_epochs>
 ```bash
 python src/generate_heatmap.py --video <video_path> --sections <sections_json> --detections <detection_json> --output-dir <output_dir>
 
-# 可选参数：
-# --overlay-dir: 输出叠加热图的视频目录路径
+# Optional parameters:
+# --overlay-dir: Directory for output videos with heatmap overlay
 ```
 
 ### 4. Start Region Marking Web Interface
 ```bash
 python src/mark_sections_web.py --video <video_path> --output <output_json> --port <port_number>
 
-# 参数说明：
-# --video: 输入视频路径
-# --output: 输出区域标记JSON文件名
-# --port: 网页服务器端口（可选，默认自动查找可用端口）
+# Parameters:
+# --video: Input video path
+# --output: Output JSON filename for region marking
+# --port: Web server port (optional, default: auto-find available port)
 ```
 
 ## Notes
