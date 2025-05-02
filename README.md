@@ -50,6 +50,10 @@ mice_detection/
 4. Dataset processing
 5. Model training
 
+## Model
+
+The project includes a pre-trained YOLO model (`best.pt`) for mouse detection, which is stored in the repository at `runs/train/mice_detector/weights/best.pt`. This model can be used directly for inference without additional training.
+
 ## Usage
 
 ### 1. Video Detection
