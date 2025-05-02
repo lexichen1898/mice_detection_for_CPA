@@ -13,6 +13,8 @@ dataset/val/*
 !runs/detect/.gitkeep
 !runs/train/.gitkeep
 !runs/heatmaps/.gitkeep
+!dataset/train/.gitkeep
+!dataset/val/.gitkeep
 
 # Keep specific model file
 !runs/train/mice_detector/weights/best.pt
