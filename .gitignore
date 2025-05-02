@@ -2,7 +2,8 @@
 videos/*
 processed_data/*
 runs/*
-
+dataset/train/*
+dataset/val/*
 # Keep directory structure
 !videos/.gitkeep
 !processed_data/.gitkeep
