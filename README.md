@@ -38,7 +38,7 @@
 
     <div class="content">
         <div id="en">
-# Lexi Mice Detection
+# Mice Detection Project
 
 A computer vision project for mouse behavior detection using YOLO model.
 
@@ -54,13 +54,13 @@ This project uses Conda for environment management. Follow these steps to set up
 conda env create -f environment.yml
 
 # Activate environment
-conda activate lexi_mice_detection
+conda activate mice_detection
 ```
 
 ## Project Structure
 
 ```
-lexi_mice_detection/
+mice_detection/
 ├── src/                    # Source code directory
 │   ├── inference.py        # Inference script
 │   ├── train_yolo.py       # Training script
