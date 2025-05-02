@@ -13,6 +13,9 @@ runs/*
 !runs/train/.gitkeep
 !runs/heatmaps/.gitkeep
 
+# Keep specific model file
+!runs/train/mice_detector/weights/best.pt
+
 # Python
 __pycache__/
 *.py[cod]
@@ -55,6 +58,7 @@ Thumbs.db
 *.onnx
 *.engine
 *.trt
+!runs/train/mice_detector/weights/best.pt
 
 # Logs
 *.log
