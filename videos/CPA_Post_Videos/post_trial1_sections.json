@@ -1,0 +1,116 @@
+{
+  "sections": [
+    {
+      "id": 1,
+      "coords": {
+        "x1": 386,
+        "y1": 228,
+        "x2": 686,
+        "y2": 369
+      },
+      "separator": {
+        "x1": 521,
+        "y1": 228,
+        "x2": 521,
+        "y2": 369
+      },
+      "subsections": {
+        "first": null,
+        "second": null
+      },
+      "separator_type": "vertical",
+      "name_tags": {
+        "left": {
+          "name": "vertical"
+        },
+        "right": {
+          "name": "horizontal"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "coords": {
+        "x1": 715,
+        "y1": 242,
+        "x2": 842,
+        "y2": 543
+      },
+      "separator": {
+        "x1": 715,
+        "y1": 383,
+        "x2": 842,
+        "y2": 383
+      },
+      "subsections": {
+        "first": null,
+        "second": null
+      },
+      "separator_type": "horizontal",
+      "name_tags": {
+        "top": {
+          "name": "vertical"
+        },
+        "bottom": {
+          "name": "horizontal"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "coords": {
+        "x1": 536,
+        "y1": 567,
+        "x2": 828,
+        "y2": 689
+      },
+      "separator": {
+        "x1": 701,
+        "y1": 567,
+        "x2": 701,
+        "y2": 689
+      },
+      "subsections": {
+        "first": null,
+        "second": null
+      },
+      "separator_type": "vertical",
+      "name_tags": {
+        "left": {
+          "name": "vertical"
+        },
+        "right": {
+          "name": "horizontal"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "coords": {
+        "x1": 375,
+        "y1": 402,
+        "x2": 516,
+        "y2": 686
+      },
+      "separator": {
+        "x1": 375,
+        "y1": 556,
+        "x2": 516,
+        "y2": 556
+      },
+      "subsections": {
+        "first": null,
+        "second": null
+      },
+      "separator_type": "horizontal",
+      "name_tags": {
+        "top": {
+          "name": "vertical"
+        },
+        "bottom": {
+          "name": "horizontal"
+        }
+      }
+    }
+  ]
+}

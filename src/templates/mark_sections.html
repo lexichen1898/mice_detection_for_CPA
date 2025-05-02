@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mark Sections</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            text-align: center;
+        }
+
+        #imageContainer {
+            position: relative;
+            display: inline-block;
+        }
+
+        #image {
+            max-width: 100%;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+
+        #status {
+            margin: 10px 0;
+        }
+
+        .section-list {
+            margin: 20px 0;
+        }
+
+        .section-item {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .separator-btn {
+            color: blue;
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .mode-indicator {
+            margin: 10px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .name-tags {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .name-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background: #e0e0e0;
+            border-radius: 3px;
+        }
+
+        .subsection-tags {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .subsection-tag {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        select {
+            padding: 5px;
+            margin: 0 5px;
+            min-width: 150px;
+        }
+
+        .subsection-label {
+            display: inline-block;
+            min-width: 80px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div class="controls">
+            <button onclick="resetCurrentSection()">Reset Current Section</button>
+            <button onclick="saveSections()">Save Sections</button>
+            <button onclick="createNameTag()">创建名称标签</button>
+        </div>
+        <div id="status">已标记区域: 0/4</div>
+        <div class="mode-indicator" id="modeIndicator">当前模式: 绘制区域</div>
+        <div class="name-tags" id="nameTags"></div>
+        <div class="section-list" id="sectionList"></div>
+        <div id="imageContainer">
+            <img id="image" src="" alt="Video Frame">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let isDrawing = false;
+        let startX, startY;
+        let currentSection = null;
+        let currentLine = null;
+        let currentSectionId = null;
+        let mode = 'section'; // 'section' 或 'separator'
+        let nameTags = [];
+        let draggedTag = null;
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const imageContainer = document.getElementById('imageContainer');
+        const image = document.getElementById('image');
+        const status = document.getElementById('status');
+        const sectionList = document.getElementById('sectionList');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const nameTagsContainer = document.getElementById('nameTags');
+
+        function createNameTag() {
+            const name = prompt('请输入标签名称：');
+            if (name) {
+                const tag = {
+                    id: Date.now(),
+                    name: name
+                };
+                nameTags.push(tag);
+                updateNameTags();
+                updateSectionList();
+            }
+        }
+
+        function updateNameTags() {
+            nameTagsContainer.innerHTML = nameTags.map(tag => `
+                <div class="name-tag" draggable="true" data-id="${tag.id}">
+                    ${tag.name}
+                </div>
+            `).join('');
+
+            // 添加拖拽事件监听
+            document.querySelectorAll('.name-tag').forEach(tag => {
+                tag.addEventListener('dragstart', handleDragStart);
+                tag.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedTag = nameTags.find(tag => tag.id === parseInt(e.target.dataset.id));
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedTag = null;
+        }
+
+        function updateSectionList(sections) {
+            if (!sections) return;
+
+            sectionList.innerHTML = sections.map(section => {
+                const hasSeparator = section.separator !== null;
+                const subsectionNames = hasSeparator ?
+                    (section.separator_type === 'vertical' ? ['left', 'right'] : ['top', 'bottom']) :
+                    ['first', 'second'];
+
+                return `
+                    <div class="section-item">
+                        <div style="margin-bottom: 10px;">
+                            Section ${section.id}
+                            <span class="separator-btn" onclick="startDrawingSeparator(${section.id})" title="添加分隔线">|</span>
+                            <span class="delete-btn" onclick="deleteSection(${section.id})" title="删除区域">×</span>
+                        </div>
+                        ${hasSeparator ? `
+                            <div class="subsection-tags">
+                                ${subsectionNames.map(subsection => `
+                                    <div class="subsection-tag">
+                                        <span class="subsection-label">${subsection}:</span>
+                                        <select onchange="updateSubsectionName(${section.id}, '${subsection}', this.value)">
+                                            <option value="">-- 选择标签 --</option>
+                                            ${nameTags.map(tag => `
+                                                <option value="${tag.name}" ${section.name_tags?.[subsection]?.name === tag.name ? 'selected' : ''}>
+                                                    ${tag.name}
+                                                </option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateSubsectionName(sectionId, subsection, name) {
+            fetch('/add_name_tag', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    section_id: sectionId,
+                    subsection: subsection,
+                    name: name
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateImage();
+                    }
+                });
+        }
+
+        function startDrawingSeparator(sectionId) {
+            mode = 'separator';
+            currentSectionId = sectionId;
+            modeIndicator.textContent = `当前模式: 绘制分隔线 (Section ${sectionId})`;
+            modeIndicator.style.color = 'blue';
+        }
+
+        function deleteSection(sectionId) {
+            fetch('/delete_section', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    section_id: sectionId
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateImage();
+                        mode = 'section';
+                        modeIndicator.textContent = '当前模式: 绘制区域';
+                        modeIndicator.style.color = '#333';
+                    }
+                });
+        }
+
+        function resetCurrentSection() {
+            currentSection = null;
+            currentLine = null;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            mode = 'section';
+            modeIndicator.textContent = '当前模式: 绘制区域';
+            modeIndicator.style.color = '#333';
+        }
+
+        function saveSections() {
+            fetch('/save_sections', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('区域已保存！');
+                    } else {
+                        alert('请先标记所有4个区域！');
+                    }
+                });
+        }
+
+        function updateImage() {
+            fetch('/get_image')
+                .then(response => response.json())
+                .then(data => {
+                    image.src = 'data:image/jpeg;base64,' + data.image;
+                    status.textContent = `已标记区域: ${data.sections_count}/4`;
+                    updateSectionList(data.sections);
+                });
+        }
+
+        imageContainer.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+
+            if (mode === 'section') {
+                currentSection = { x1: startX, y1: startY };
+            } else if (mode === 'separator') {
+                currentLine = { x1: startX, y1: startY };
+            }
+        });
+
+        imageContainer.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (mode === 'section') {
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(
+                    currentSection.x1,
+                    currentSection.y1,
+                    x - currentSection.x1,
+                    y - currentSection.y1
+                );
+            } else if (mode === 'separator') {
+                ctx.strokeStyle = 'blue';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(currentLine.x1, currentLine.y1);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        });
+
+        imageContainer.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+            isDrawing = false;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (mode === 'section') {
+                fetch('/add_section', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        x1: currentSection.x1,
+                        y1: currentSection.y1,
+                        x2: x,
+                        y2: y
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateImage();
+                        } else {
+                            alert('已达到最大区域数量 (4)');
+                        }
+                    });
+            } else if (mode === 'separator') {
+                fetch('/add_separator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        section_id: currentSectionId,
+                        x1: currentLine.x1,
+                        y1: currentLine.y1,
+                        x2: x,
+                        y2: y
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateImage();
+                            mode = 'section';
+                            modeIndicator.textContent = '当前模式: 绘制区域';
+                            modeIndicator.style.color = '#333';
+                        }
+                    });
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            currentSection = null;
+            currentLine = null;
+        });
+
+        // 添加拖拽放置事件监听
+        imageContainer.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+
+        imageContainer.addEventListener('drop', e => {
+            e.preventDefault();
+            if (draggedTag) {
+                const rect = imageContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // 创建新的名称标签
+                const nameElement = document.createElement('div');
+                nameElement.className = 'subsection-name';
+                nameElement.textContent = draggedTag.name;
+                nameElement.style.left = `${x}px`;
+                nameElement.style.top = `${y}px`;
+
+                // 添加拖动功能
+                nameElement.draggable = true;
+                nameElement.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', '');
+                });
+
+                nameElement.addEventListener('dragend', e => {
+                    const rect = imageContainer.getBoundingClientRect();
+                    const newX = e.clientX - rect.left;
+                    const newY = e.clientY - rect.top;
+                    nameElement.style.left = `${newX}px`;
+                    nameElement.style.top = `${newY}px`;
+
+                    // 保存新的标签位置
+                    fetch('/add_name_tag', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            section_id: currentSectionId,
+                            x: newX,
+                            y: newY,
+                            name: draggedTag.name
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateImage();
+                            }
+                        });
+                });
+
+                imageContainer.appendChild(nameElement);
+
+                // 保存标签位置
+                fetch('/add_name_tag', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        section_id: currentSectionId,
+                        x: x,
+                        y: y,
+                        name: draggedTag.name
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateImage();
+                        }
+                    });
+            }
+        });
+
+        // 初始化
+        image.onload = function () {
+            canvas.width = image.width;
+            canvas.height = image.height;
+        };
+
+        // 加载初始图像
+        updateImage();
+    </script>
+</body>
+
+</html>
