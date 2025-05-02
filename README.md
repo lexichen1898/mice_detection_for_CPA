@@ -40,10 +40,10 @@
         <div id="en">
 # Lexi Mice Detection
 
-## Overview
 A computer vision project for mouse behavior detection using YOLO model.
 
 ## Environment Setup
+
 This project uses Conda for environment management. Follow these steps to set up the environment:
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/download)
@@ -58,6 +58,7 @@ conda activate lexi_mice_detection
 ```
 
 ## Project Structure
+
 ```
 lexi_mice_detection/
 ├── src/                    # Source code directory
@@ -69,11 +70,20 @@ lexi_mice_detection/
 │   ├── split_dataset.py    # Dataset splitting
 │   ├── video_cutter.py     # Video cutting
 │   └── templates/          # Web interface templates
-├── environment.yml         # Environment configuration
-└── README.md              # Project documentation
+├── videos/                 # Directory for input videos
+├── processed_data/         # Directory for processed data
+│   ├── annotations/        # Annotation files
+│   └── labels/            # Label files
+├── runs/                  # Directory for model outputs
+│   ├── detect/           # Detection results
+│   ├── train/            # Training results
+│   └── heatmaps/         # Heatmap results
+├── environment.yml        # Environment configuration
+└── README.md             # Project documentation
 ```
 
 ## Main Features
+
 1. Video object detection
 2. Heatmap generation
 3. Region marking
@@ -81,6 +91,7 @@ lexi_mice_detection/
 5. Model training
 
 ## Usage
+
 ### 1. Video Detection
 ```bash
 python src/inference.py --video <video_path> --model <model_path>
@@ -102,6 +113,7 @@ python src/mark_sections_web.py
 ```
 
 ## Notes
+
 1. Ensure all dependencies are correctly installed
 2. Make sure you have sufficient disk space before use
 3. GPU is recommended for training and inference
@@ -140,7 +152,15 @@ lexi_mice_detection/
 │   ├── split_dataset.py    # 数据集分割
 │   ├── video_cutter.py     # 视频切割
 │   └── templates/          # Web界面模板
-├── environment.yml         # 环境配置文件
+├── videos/                 # 输入视频目录
+├── processed_data/         # 处理后的数据目录
+│   ├── annotations/        # 标注文件
+│   └── labels/            # 标签文件
+├── runs/                  # 模型输出目录
+│   ├── detect/           # 检测结果
+│   ├── train/            # 训练结果
+│   └── heatmaps/         # 热力图结果
+├── environment.yml        # 环境配置文件
 └── README.md              # 项目说明文档
 ```
 

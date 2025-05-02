@@ -1,9 +1,25 @@
+# Data directories
+videos/*
+processed_data/*
+runs/*
+
+# Keep directory structure
+!videos/.gitkeep
+!processed_data/.gitkeep
+!runs/.gitkeep
+!processed_data/annotations/.gitkeep
+!processed_data/labels/.gitkeep
+!runs/detect/.gitkeep
+!runs/train/.gitkeep
+!runs/heatmaps/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -15,27 +31,25 @@ lib64/
 parts/
 sdist/
 var/
-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
 # Virtual Environment
 venv/
-env/
 ENV/
-.env
-.venv
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# OS
 .DS_Store
+Thumbs.db
 
 # Project specific
-runs/
 *.pt
 *.pth
 *.onnx
